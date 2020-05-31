@@ -10,7 +10,6 @@ from nltk.tokenize import word_tokenize
 import dill
 
 # nltk.download("stopwords")
-# nltk.download('averaged_perceptron_tagger')
 # nltk.download('punkt')
 # nltk.download('wordnet')
 
@@ -64,4 +63,5 @@ class Process_Text():
   def process_text_array(self, textArray):
     return textArray.apply(lambda text: self.process_text(text))
 
-dill.dump(Process_Text, open('serialized/process_text.sav', 'wb'))
+
+
