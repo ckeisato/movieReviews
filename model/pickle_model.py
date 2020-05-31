@@ -5,15 +5,16 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from process_text import process_text_array
+from process_text import Process_Text
 
 # gets/cleans data, trains model, pickles model
 def initModel():
+  process_text = Process_Text()
+
   data = pd.read_csv('resources/Reviews.csv')
   print("Number of positive and negative reviews", '\n', data["sentiment"].value_counts())
   test_data = data.copy(deep=True)
-  # test_data = data.head(20)
-  test_data = test_data.assign(review = process_text_array(test_data["review"]))
+  test_data = test_data.assign(review = process_text.process_text_array(test_data["review"]))
   print("done cleaning data", test_data.head())
 
   # split data
@@ -46,7 +47,7 @@ def initModel():
 
   print('model score', score)
 
-  pickle.dump(model, open('trained_model.sav', 'wb'))
-  pickle.dump(vectorizer, open('trained_vectorizer.sav', 'wb'))
+  pickle.dump(model, open('serialized/trained_model.sav', 'wb'))
+  pickle.dump(vectorizer, open('serialized/trained_vectorizer.sav', 'wb'))
 
 initModel()

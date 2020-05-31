@@ -11,6 +11,14 @@ def main():
 
   loaded_vectorizer = pickle.load(open('../model/trained_vectorizer.sav', 'rb'))
   loaded_model = pickle.load(open('../model/trained_model.sav', 'rb'))
-  result = loaded_model.predict_proba(loaded_vectorizer.transform([process_text(text)]))
-  print(result)
+
+  # result = loaded_model.predict_proba(loaded_vectorizer.transform([process_text(text)]))
+  print(text)
+  text = loaded_vectorizer.transform([text])
+  result = loaded_model.predict_proba(text)
+
+  # print(result)
   return (jsonify({ 'negative': result[0][0], 'positive': result[0][1]}))
+
+
+# env FLASK_APP=app.py flask run
