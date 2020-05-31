@@ -13,7 +13,7 @@ from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
 # nltk.download('wordnet')
 
-with open('resources/contractions.json', 'r') as f:
+with open('../model/resources/contractions.json', 'r') as f:
   contractions = json.load(f)
 contractions_keys = contractions.keys()
 replace_re_by_space = re.compile('[/(){}\[\]\|@,;]')
