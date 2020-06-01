@@ -1,19 +1,21 @@
 
 var url = "https://us-central1-poetic-avenue-237204.cloudfunctions.net/movieReviewSentiment/";
 
+// url = 'http://localhost:5000';
+
 function init() {
   console.log('herro');
 
   function getResults() {
     let formData = new FormData();
-    formData.append('text', 'bad not good I hated it worst ever');
+    formData.append('text', 'bad not good I hated it worst ever no good');
 
     fetch(url, {
       method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: formData
+      body: JSON.stringify(formData)
     })
     .then(function(response) {
         // if (response.status !== 200) {

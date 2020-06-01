@@ -22,7 +22,7 @@ def main():
   # result = loaded_model.predict_proba(text)
 
   # print(result)
-  return (jsonify({ 'negative': 1, 'positive': 1}), 200, headers)
+  return (text, 200, headers)
 
 
 # env FLASK_APP=app.py flask run
