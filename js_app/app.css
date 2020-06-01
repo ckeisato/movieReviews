@@ -1,0 +1,25 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #34495e;
+  padding: 40px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.demo .loading-indicator {
+  display: none;
+}
+
+.demo .result {
+  display: none;
+}
+
+.demo.loading .loading-indicator {
+  display: block;
+}
+
+.demo.done .result {
+  display: block;
+}

@@ -8,6 +8,8 @@ import dill
 
 dill.settings['recurse'] = True
 
+nltk.download('wordnet')
+
 def process_text(text):
   contractions = { 
     "ain't": "am not / are not / is not / has not / have not",

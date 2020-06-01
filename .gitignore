@@ -1,3 +1,4 @@
 .DS_Store
 model/resources/*
 model/serialized/*
+js_app/node_modules/*
