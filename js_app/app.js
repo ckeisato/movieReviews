@@ -1,6 +1,6 @@
 
 function init() {
-  var url = "http://us-central1-poetic-avenue-237204.cloudfunctions.net/movieReviewSentiment/";
+  var url = "https://us-central1-poetic-avenue-237204.cloudfunctions.net/movieReviewSentiment/";
   var seconds = 0;
 
   // dom elements
