@@ -1,11 +1,15 @@
 body {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family:'Roboto',sans-serif;
   color: #34495e;
   padding: 40px;
 }
 
 h1 {
   text-align: center;
+}
+
+.demo {
+  /*text-align: center;*/
 }
 
 .demo .loading-indicator {
@@ -23,3 +27,43 @@ h1 {
 .demo.done .result {
   display: block;
 }
+.demo-input,
+.demo-result {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+.input {
+  width: 80%;
+  min-height: 200px;
+  resize: both;
+  overflow: auto;
+  margin-bottom: 20px;
+}
+
+.button {
+  text-align: center;
+  font-weight: bold;
+  text-decoration: none;
+  color: #34495e;
+  background-color: #FFFFFF;
+  border: 2px solid #34495e;
+  padding: 10px;
+  margin: 0 10px 2px 0;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.button:hover {
+  color: #FFFFFF;
+  background-color: #34495e;
+}
+
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
