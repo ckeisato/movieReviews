@@ -4,7 +4,7 @@ This is a demonstration for a machine learning model that determines whether a p
 
 #### Information about the model and application
 
-- The model built using sklearn's logistic regression module.  The source code for how the model was trained and constructed can be found HERE.
+- The model built using sklearn's logistic regression module.  The source code for how the model was trained and constructed can be found https://github.com/ckeisato/movieReviews/tree/master/model.
 
 - The model is trained on corpus of movie reviews, so it will probably perform better with text that has similar language to a review.  More information on the data that was used can be found HERE.
 
