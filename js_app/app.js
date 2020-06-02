@@ -1,23 +1,30 @@
 
-var url = "http://us-central1-poetic-avenue-237204.cloudfunctions.net/movieReviewSentiment/";
-
-// url = 'http://localhost:5000';
-
 function init() {
+  var url = "http://us-central1-poetic-avenue-237204.cloudfunctions.net/movieReviewSentiment/";
+  var seconds = 0;
+
+  // dom elements
   var cta = document.getElementById("analyze-cta");
   var input = document.getElementById("input");
   var demo = document.getElementById("demo");
   var reset = document.getElementById("reset-cta");
   var resultsPositive = document.getElementsByClassName("result-positive");
   var resultsNegative = document.getElementsByClassName("result-negative");
-  
+  var secondsCounter = document.getElementById('seconds-counter');
+
   function getResults() {
+    demo.classList.remove('done');
     demo.classList.add("loading");
     input.disabled = true;
     cta.disabled = true;
     reset.disabled = true;
+    seconds = 0;
 
-    console.log("making the request!!!");
+    function incrementSeconds() {
+      seconds += 1;
+      secondsCounter.innerText = "You have been here for " + seconds + " seconds.";
+    }
+    var interval = setInterval(incrementSeconds, 1000);
 
     fetch(url, {
       method: 'POST',
@@ -29,6 +36,8 @@ function init() {
       })
     })
     .then(function(response) {
+      clearInterval(interval);
+
       response.text().then(function(text) {
         console.log("Done with the request!!!!", text);
         if (text) {
@@ -36,11 +45,6 @@ function init() {
           demo.classList.remove("loading");
           
           var results = JSON.parse(text);
-
-          console.log("results", results);
-          console.log("results.negative", results.negative);
-
-
           var positive = Math.round(parseFloat(results.positive) * 10000)/100;
           var negative = Math.round(parseFloat(results.negative) * 10000)/100;
 
@@ -70,3 +74,8 @@ function init() {
 }
 
 init();
+
+
+
+
+
