@@ -39,23 +39,22 @@ function init() {
       clearInterval(interval);
 
       response.text().then(function(text) {
-        console.log("Done with the request!!!!", text);
         if (text) {
           demo.classList.add("done");
           demo.classList.remove("loading");
           
+          input.disabled = false;
+          cta.disabled = false;
+          reset.disabled = false;
+
           var results = JSON.parse(text);
           var positive = Math.round(parseFloat(results.positive) * 10000)/100;
           var negative = Math.round(parseFloat(results.negative) * 10000)/100;
 
-          for (var i = 0; i < 2; i++) {
+          for (var i = 0; i < 1; i++) {
             resultsPositive[i].innerText = positive + '%';
             resultsNegative[i].innerText = negative + '%';
           }
-
-          input.disabled = false;
-          cta.disabled = false;
-          reset.disabled = false;
         }
       });
     })
