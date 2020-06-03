@@ -22,7 +22,7 @@ function init() {
 
     function incrementSeconds() {
       seconds += 1;
-      secondsCounter.innerText = "You have been here for " + seconds + " seconds.";
+      secondsCounter.innerText = "You have been waiting for " + seconds + " seconds.";
     }
     var interval = setInterval(incrementSeconds, 1000);
 

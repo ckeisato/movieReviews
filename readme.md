@@ -11,3 +11,7 @@ This is a demonstration for a machine learning model that determines whether a p
 - The model is run on a Google Cloud function.
 
 - The request can take up to 10 seconds to complete, so please be patient.
+
+#### todo:
+- set up command line deployment for google cloud function
+- migrate from cloud function to app engine?

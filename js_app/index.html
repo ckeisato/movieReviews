@@ -13,10 +13,24 @@
   <h4>Information about the model and application</h4>
   <ul>
     <li>
-      The model built using sklearn's logistic regression module.  The source code for how the model was trained and constructed can be found <a href="https://github.com/ckeisato/movieReviews/tree/master/model" target="_blank">HERE</a>.
+      The model built using sklearn's logistic regression module and uses the default settings.  The source code for how the model was trained and constructed can be found <a href="https://github.com/ckeisato/movieReviews/tree/master/model" target="_blank">HERE</a>.
     </li>
     <li>
-      The model is trained on corpus of movie reviews, so it will probably perform better with text that has similar language to a review.  More information on the data that was used can be found <a href="https://github.com/ckeisato/movieReviews/blob/master/model/index.ipynb" target="_blank">HERE</a>.
+      The model is trained on corpus of 5000 movie reviews - 2500 postive and 2500 negative.
+        <ul>
+          <li>
+            The module was trained with 30/70 test train split.
+          </li>
+          <li>
+            The model had an accuracy of ~90% with the test data.
+          </li>
+          <li>
+            Because the model was built with reviews data, it will probably perform better with text is similar to a review.
+          </li>
+          <li>
+            More information on the data that was used can be found <a href="https://github.com/ckeisato/movieReviews/blob/master/model/index.ipynb" target="_blank">HERE</a>.
+          </li>
+        </ul>
     </li>
     <li>
       The model is run on a Google Cloud function.
@@ -40,9 +54,8 @@
       </div>
       <div class="result">
         <h4>Result:</h4>
-        <p>Positive: <span class="result-positive"></span></p>
-        <p>Negative: <span class="result-negative"></span></p>
-        <p>There is a <span class="result-positive"></span> probability that your statement is positive and <span class="result-negative"></span> propability that it is negative.</p>
+        <p>Probability that your statement is <strong>positive</strong>: <span class="result-positive"></span></p>
+        <p>Probability that your statement is <strong>negative</strong>: <span class="result-negative"></span></p>
       </div>
     </div>
   </div>
