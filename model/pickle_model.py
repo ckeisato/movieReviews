@@ -14,7 +14,7 @@ def initModel():
   data = pd.read_csv('resources/Reviews.csv')
   print("Number of positive and negative reviews", '\n', data["sentiment"].value_counts())
   test_data = data.copy(deep=True)
-  test_data = test_data.assign(review = process_text.process_text_array(test_data["review"]))
+  # test_data = test_data.assign(review = process_text.process_text_array(test_data["review"]))
   print("done cleaning data", test_data.head())
 
   # split data

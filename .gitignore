@@ -3,3 +3,4 @@ model/resources/*
 model/serialized/*
 js_app/public/
 js_app/node_modules/*
+model/__pycache__/*
