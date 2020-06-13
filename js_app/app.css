@@ -1,5 +1,5 @@
 body {
-  font-family:'Roboto',sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #34495e;
   padding: 40px;
 }
@@ -8,8 +8,16 @@ h1 {
   text-align: center;
 }
 
+code, pre {
+  font-family: Consolas,"courier new";
+  color: black;
+  background-color: #f1f1f1;
+  padding-top: 10px;
+}
+
 .demo {
   /*text-align: center;*/
+  margin-bottom: 40px;
 }
 
 .demo .loading-indicator {
@@ -42,6 +50,7 @@ h1 {
 }
 
 .button {
+  font-family:'Roboto',sans-serif;
   text-align: center;
   font-weight: bold;
   text-decoration: none;

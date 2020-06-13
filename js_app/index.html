@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width" />
   <link rel="stylesheet" href="app.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body id="body">
   <h1>Sentiment Analysis</h1>
@@ -58,6 +59,46 @@
         <p>Probability that your statement is <strong>negative</strong>: <span class="result-negative"></span></p>
       </div>
     </div>
+  </div>
+  <div class="discussion">
+    <h4>Deploying this ML model to a Google Cloud Function</h4>
+    <p>As mentioned above, the model is executed by a google cloud function, which runs a piece of code on command.  For this I needed to set up the cloud function and a static version of the trained model and language vectorizer.</p>
+    <h5>Storing a pretrained model and vectorizer</h5>
+    <p>The function is using a pretrained version of the sentiment analysis model.  This is because it would require too much data and computation to store the training data and retrain the model on each request.  It is also unnecessary since the trained model will not change because I am not adding to the training data.  The same is true for the language vectorizer.</p>
+    <p>After training the model and fitting the vectorizer to the given data, I serialize the two using the pickle library.</p>
+    <pre>
+      pickle.dump(model, open('serialized/trained_model.sav', 'wb'))
+      pickle.dump(vectorizer, open('serialized/trained_vectorizer.sav', 'wb'))
+    </pre>
+    <h5>Unpacking the model and vectorizer in Google Cloud</h5>
+    <p>For the Google Cloud function, I've set up a corresponding bucket where I upload the trained_model.sav and trained_vectorizer.sav files.  In the cloud function, I add these file names and the bucket name as environment variables.</p>
+    <pre>
+      BUCKET = os.environ['BUCKET']
+      VECTORIZER_FILENAME = os.environ['VECTORIZER_FILENAME']
+      MODEL_FILENAME = os.environ['MODEL_FILENAME']
+    </pre>
+    <p>Next I connect to the bucket using the Google Cloud storage library.</p>
+    <pre>
+      from google.cloud import storage
+
+      client = storage.Client()
+      bucket = client.get_bucket(BUCKET)
+    </pre>
+    <p>Now that I've connected to the bucket, I can get the serialized model and vector and deserialize them using pickle (the same library used earlier).</p>
+    <pre>
+      vectorizer_blob = bucket.get_blob(VECTORIZER_FILENAME)
+      model_blob = bucket.get_blob(MODEL_FILENAME)
+
+      vectorizer = pickle.loads(vectorizer_blob.download_as_string())
+      model = pickle.loads(model_blob.download_as_string())
+    </pre>
+    <p>At this point the model and vectorizer are ready to use as normal.</p>
+    <pre>
+      vectorized_text = vectorizer.transform([input])
+      result = model.predict_proba(vectorized_text)
+    </pre>
+    <p>Unpacking the vectorizer and model are the heaviest operations in this process, the vectorizer more so, because its serialized form is about 43mb while the model is 483kb.  This is probably because the vectorizer is probably storing every word in the training data in order to map it to a vector.  For this Google Cloud function I had to allocate 512mb of data.</p>
+    <p>Code for the function can be found <a href="https://github.com/ckeisato/movieReviews/blob/master/app_test/cloud.py" target="_blank">HERE</a>.</p>
   </div>
 </body>
 <footer>
