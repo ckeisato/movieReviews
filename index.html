@@ -1,0 +1,61 @@
+<!DOCTYPE html><html><head><title>Sentiment Analysis</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="app.css"><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"></head><body id="body"><h1>Sentiment Analysis</h1><p>This is a demonstration for a machine learning model that determines if a given phrase has a positive or negative sentiment.</p><h4>About the model and application</h4><ul><li>The model was built using sklearn's logistic regression module and uses the default settings. The source code for how the model was trained and used can be found <a href="https://github.com/ckeisato/movieReviews/tree/master/model" target="_blank">HERE</a>.</li><li>The model was trained on corpus of 5000 movie reviews - 2500 postive and 2500 negative.<ul><li>The model was trained with 30/70 test/train split.</li><li>The model had an accuracy of ~90% with the test data.</li><li>Because the model was trained with reviews data, it will probably perform better with text is similar to a review.</li><li>More information on the data that was used can be found <a href="https://github.com/ckeisato/movieReviews/blob/master/model/index.ipynb" target="_blank">HERE</a>.</li></ul></li><li>The model is run on a Google Cloud function.</li><li>The request can take up to 10 seconds to complete, so please be patient.</li></ul><div class="demo" id="demo"><h4>Try it out!</h4><div class="demo-input"><textarea type="text" id="input" name="input" class="input" placeholder="Input some text here"></textarea><br><button type="button" id="analyze-cta" class="button">Analyze Text</button> <button type="button" id="reset-cta" class="button">Reset</button></div><div class="demo-result"><div class="loading-indicator"><h4>Loading...</h4><div id="seconds-counter"></div></div><div class="result"><h4>Result:</h4><p>Probability that your statement is <strong>positive</strong>: <span class="result-positive"></span></p><p>Probability that your statement is <strong>negative</strong>: <span class="result-negative"></span></p></div></div></div><div class="discussion"><h4>Training the sentiment analysis model</h4><p>For this project, I had a corpus of 5000 movie reviews that were labeled positive or negative, and there were 2500 of each category. I trained a logistic regression model to recognize if a new piece of text has a positive or negative sentiment.</p><pre>
+      import pandas as pd
+
+      data = pd.read_csv('resources/Reviews.csv')
+      print("Number of positive and negative reviews", '\n', data["sentiment"].value_counts())
+      test_data.head()
+
+      ...
+
+      Number of positive and negative reviews 
+      1    25000
+      0    25000
+                                                    review  sentiment
+      0  My family and I normally do not watch local mo...          1
+      1  Believe it or not, this was at one time the wo...          0
+      2  After some internet surfing, I found the "Home...          0
+      3  One of the most unheralded great works of anim...          1
+      4  It was the Sixties, and anyone with long hair ...          0
+    </pre><h5>Processing the text data</h5><p>First I split the data into a 70/30 test train split and then vectorize the review text. Vectorizing means transforming the text into a standardized format that the model can process. This needs to be done for the training data and any new input, which is why it is used in the cloud function later on. I used the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html">TFIDF vectorizer from sklearn</a> initialized with standard settings for the TFIDF vectorizer.</p><pre>
+      from sklearn.model_selection import train_test_split
+      from sklearn.feature_extraction.text import TfidfVectorizer
+
+      x_train, x_test, y_train, y_test = train_test_split(
+        test_data["review"],
+        test_data["sentiment"],
+        test_size=0.3,
+        random_state=42
+      )
+
+      vectorizer = TfidfVectorizer(max_df=0.9, min_df=0.0005, ngram_range=(1,2)).fit(x_train)
+    </pre><p>Previously I tried preprocessing the data manually before feeding it into the TFID Vectorizor, this entailed removing stop words, punctuation, contractractions, and applying lemmatization. But this additional step did not result in a higher accuracy - likely because the vectorizer has similar preprocessing steps built in. Since then I removed my custom preprocessing.</p><h5>Training the model</h5><p>The next step was to fit the model to the training data. For the given test data, this model achieved a ~90% acurracy.</p><pre>
+      from sklearn.linear_model import LogisticRegression
+
+      x_train = vectorizer.transform(x_train)
+      x_test = vectorizer.transform(x_test)
+
+
+      model = LogisticRegression(solver='lbfgs')
+      model.fit(x_train, y_train)
+    </pre><p>Code for training the model can be found <a href="https://github.com/ckeisato/movieReviews/tree/master/model" target="_blank">HERE</a>.</p><h4>Deploying this ML model to a Google Cloud Function</h4><p>The demo above is calling a Google Cloud Function that executes a static version of the trained model. To implement this service I set up a Google Cloud Function and created serialized versions of the language vectorizer and trained model.</p><h5>Storing a pretrained model and vectorizer</h5><p>The function is using a pretrained version of the sentiment analysis model. This is because it would require too much data and computation to store the training data and retrain the model on each request. Also, new data is not being added to the training set, so it is not necessary to update or retrain the model on each request. The same is true for the language vectorizer.</p><p>After training the model and fitting the vectorizer to the given data, I serialized the two using the pickle library.</p><pre>
+      pickle.dump(model, open('serialized/trained_model.sav', 'wb'))
+      pickle.dump(vectorizer, open('serialized/trained_vectorizer.sav', 'wb'))
+    </pre><h5>Unpacking the model and vectorizer in Google Cloud</h5><p>For the Google Cloud function, I set up a Google Storage bucket where I upload the trained_model.sav and trained_vectorizer.sav files. In the cloud function, I add these file names and the bucket name as environment variables.</p><pre>
+      BUCKET = os.environ['BUCKET']
+      VECTORIZER_FILENAME = os.environ['VECTORIZER_FILENAME']
+      MODEL_FILENAME = os.environ['MODEL_FILENAME']
+    </pre><p>Next I connect to the bucket using the Google Cloud storage library.</p><pre>
+      from google.cloud import storage
+
+      client = storage.Client()
+      bucket = client.get_bucket(BUCKET)
+    </pre><p>Now that I connected to the bucket, I can download the serialized model and vector and deserialize them using pickle (the same library used earlier).</p><pre>
+      vectorizer_blob = bucket.get_blob(VECTORIZER_FILENAME)
+      model_blob = bucket.get_blob(MODEL_FILENAME)
+
+      vectorizer = pickle.loads(vectorizer_blob.download_as_string())
+      model = pickle.loads(model_blob.download_as_string())
+    </pre><p>At this point the model and vectorizer are ready to use as normal.</p><pre>
+      vectorized_text = vectorizer.transform([input])
+      result = model.predict_proba(vectorized_text)
+    </pre><p>Unpacking the vectorizer and model are the heaviest operations in this process, the vectorizer more so, because its serialized form is about 43mb while the model is 483kb. This is probably because the vectorizer is storing every word in the training data in order to map it to a vector. For this Google Cloud function I had to allocate 512mb of data.</p><p>Code for the function can be found <a href="https://github.com/ckeisato/movieReviews/blob/master/app_test/cloud.py" target="_blank">HERE</a>.</p></div></body><footer></footer><script src="app.js"></script></html>
