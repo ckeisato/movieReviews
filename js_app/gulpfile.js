@@ -7,11 +7,6 @@ var flatten = require('gulp-flatten');
 var rename = require('gulp-rename');
 var htmlmin = require('gulp-htmlmin');
 
-var node_modules_path = './node_modules';
-// var paths = {
-// 	'node': './node_modules',
-// 	'assets': './assets'
-// }
 
 // remove files in the public folder
 gulp.task('clean', function(){
