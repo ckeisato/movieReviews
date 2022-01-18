@@ -15,8 +15,7 @@ var node_modules_path = './node_modules';
 
 // remove files in the public folder
 gulp.task('clean', function(){
-	return gulp.src('./public/*', {read: false})
-		.pipe(clean());
+	return gulp.src('./public/**/**/*', {read: false}).pipe(clean());
 });
 
 gulp.task('serve', function(){
@@ -26,9 +25,9 @@ gulp.task('serve', function(){
 		}
 	});
 
-	gulp.watch('index.html', ['pages']);
-	gulp.watch('app.css',['styles']);
-	gulp.watch('app.js',['scripts']);
+	gulp.watch('index.html', gulp.series(['pages']));
+	gulp.watch('app.css', gulp.series(['styles']));
+	gulp.watch('app.js', gulp.series(['scripts']));
 
   gulp.watch(['app.css', 'app.js', 'index.html']).on('change', browserSync.reload);
 });
@@ -45,18 +44,18 @@ gulp.task('pages', function(){
 
 // compiles styles with foundation base styles
 gulp.task('styles', function(){
-	gulp.src('app.css')
+	return gulp.src('app.css')
 	.pipe(cssmin())
 	.pipe(gulp.dest('./public'), { base: '.'});
 });
 
 
 gulp.task('scripts', function(){
-	gulp.src('app.js')
+	return gulp.src('app.js')
 		.pipe(gulp.dest('./public'));
 });
 
 
-gulp.task('default', ['pages', 'styles','scripts', 'serve']);
+gulp.task('default', gulp.series(['pages', 'styles','scripts', 'serve']));
 
-gulp.task('build', ['pages', 'styles', 'scripts']);
+gulp.task('build', gulp.series(['pages', 'styles', 'scripts']));
